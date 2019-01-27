@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+
+import datetime
+import os
+import subprocess
+import sys
+
+os.chdir(os.path.dirname(sys.argv[0]))
+
+TOOLS = {
+    "sophia":         "./b_sophia/run     {task} '{filename}'",
+    "sophia_lg":      "./b_sophia/run     5      '{filename}'",
+    "sophia_wasm":    "./b_wasm/sophia.js {task} '{filename}'",
+    "sophia_wasm_lg": "./b_wasm/sophia.js {task} '{filename}' light",
+    "librdf":         "./b_librdf/run     {task} '{filename}'",
+    "librdf-ttl":     "./b_librdf/run     {task} '{filename}' turtle",
+    "jena":           "./b_jena/run       {task} '{filename}'",
+    "n3js":           "./b_wasm/n3js.js   {task} '{filename}'",
+    "python":         "./b_python/run     {task} '{filename}'",
+    "pypy":           "./b_python/run     {task} '{filename}' pypy",
+}
+
+FILES = [
+    ("./data/persondata_en_10k.ttl",    10_000),
+    ("./data/persondata_en_20k.ttl",    20_000),
+    ("./data/persondata_en_40k.ttl",    40_000),
+    ("./data/persondata_en_80k.ttl",    80_000),
+    ("./data/persondata_en_100k.ttl",  100_000),
+    ("./data/persondata_en_1M.ttl",  1_000_000),
+    ("./data/persondata_en.ttl",    10_310_000),
+]
+
+LIMITS = {
+    ("librdf", "query"):   100_000,
+    ("jena",   "query"): 1_000_000, # OutOfMemoryError: Java heap space
+    ("n3js",   "query"): 1_000_000,
+    ("python", "query"): 1_000_000,
+}
+
+HEADERS = {
+    "parse": "t_parse",
+    "query": "t_load,m_graph,t_first,t_rest",
+}
+
+def main():
+    if len(sys.argv) != 3:
+        print("usage: {} <task> <tool>".format(sys.argv[0]), file=sys.stderr)
+        print("  available tasks: {}".format(
+            ",".join(HEADERS)
+        ))
+        print("  available tools: {}".format(
+            ",".join(TOOLS)
+        ))
+        exit(1)
+    else:
+        args = sys.argv[1:]
+    task = args[0]
+    tool = args[1]
+    nb_iter = int(os.getenv("N", "4"))
+
+    if task not in HEADERS:
+        print("available tasks: " + ", ".join(HEADERS), file=sys.stderr)
+        exit(2)
+    if tool not in TOOLS:
+        print("available tools: " + ", ".join(TOOLS), file=sys.stderr)
+        exit(3)
+
+
+    csv = "csv/{}-{}-{}.csv".format(task, tool,
+        str(datetime.datetime.now())[:19].replace(' ', '-').replace(':', '-'),
+    )
+    with open(csv, 'w') as f:
+        try:
+            print("WRITING", csv, file=sys.stderr)
+            f.write("tool,size,{}\n".format(HEADERS[task]))
+            f.flush()
+
+            for filename, size in FILES:
+                for _ in range(nb_iter):
+                    cmd = TOOLS[tool]
+                    if size > LIMITS.get((tool, task), 999_999_999_999):
+                        continue
+                    cmd = cmd.format(task=task, filename=filename)
+                    res = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+                    f.write("{},{},{}".format(tool, size, res.stdout.decode('utf8')))
+                    f.flush()
+                    print("DONE", tool, filename, file=sys.stderr)
+        except KeyboardInterrupt:
+            sys.stdout.write("\r") # clear the '^C' that appears
+
+    csv_link = "csv/{}-{}.csv".format(task, tool)
+    try:
+        os.unlink(csv_link)
+    except FileNotFoundError:
+        pass
+    os.link(csv, csv_link)
+    print("LINKED", csv_link)
+    
+
+main()

@@ -1,0 +1,34 @@
+Each benchmark is a program accepting, at least,
+two parameters:
+  * a *task* name (see below)
+  * a filename.
+It produces on its standard output a CSV file (without headers) as specified below.
+It may produce anything else on its standard error.
+
+Here are the tasks that benchmark programs should support:
+
+* parse
+
+  Only parse the given file, *without* loading it into a graph,
+  in order to measure the time spent by the parsing itself.
+
+  The CSV has the following columns:
+
+  - the time (in seconds, as a decimal) taken to parse the file.
+
+* query
+
+  Load <filename> into an in-memory graph,
+  then count all triples having predicate rdf:type and object dbo:Person.
+
+  The CSV has the following columns:
+
+  - the time (in seconds, as a decimal) taken to allocate the graph and load the file into it;
+  - the memory (in KiB, as an int) allocated between the time just before the graph is created,
+    and just after it is loaded;
+  - the time (in seconds, as a decimal) taken to initiate the query and return the *first* triple;
+  - the time (in seconds, as a decimal) taken to iterate over all the remaining triples.
+
+A useful convention for benchark programs is to be named `b_X/run`,
+where X is the tool being benchmarked.
+But in some situations, it may be useful to depart from this convention.

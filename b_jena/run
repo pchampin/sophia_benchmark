@@ -1,0 +1,3 @@
+#!/bin/sh
+DIR="`dirname "$0"`"
+java -cp "$DIR:`"$DIR/cp.sh"`" JenaBenchmark "$@"

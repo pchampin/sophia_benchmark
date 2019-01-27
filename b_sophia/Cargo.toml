@@ -1,0 +1,13 @@
+
+[package]
+name = "sophia_benchmark"
+version = "0.1.0"
+authors = ["Pierre-Antoine Champin <pchampin@liris.cnrs.fr>"]
+
+[workspace]
+members = [".", ]
+
+[dependencies]
+sophia = { git = "https://github.com/pchampin/sophia_rs", tag = "v0.1.0" }
+time = "0.1.40"
+regex = "1.1.0"

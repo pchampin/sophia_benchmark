@@ -1,0 +1,14 @@
+#!/bin/sh
+if [ "$2" = "" ]; then
+    echo >/dev/stderr "usage: $0 <task> <filenale> [venv]"
+    exit 1
+fi
+DIR=`dirname "$0"`
+TASK=$1; shift
+FILE=$1; shift
+if [ "$1" = "" ]; then
+    VENV=py3
+else
+    VENV=$1; shift
+fi
+exec $DIR/$VENV.env/bin/python $DIR/run.py $TASK $FILE "$@"
