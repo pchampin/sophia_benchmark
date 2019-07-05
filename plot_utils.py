@@ -31,6 +31,7 @@ def load_data(task, *tools):
     
     if task == 'query':
         df['t_query'] = (df.t_first + df.t_rest)
+        df['r_load'] = (df['size'] / df.t_load)
     return df.groupby(['tool', 'size'])
 
 def my_plot(data, attr_name, *, exclude=[], savename=None, **kw):
@@ -51,6 +52,8 @@ def my_plot(data, attr_name, *, exclude=[], savename=None, **kw):
 def plot_query_stats(data):
     my_plot(data, "t_load", title="Time (in s) to load an NT file in memory", loglog=1)
     #my_plot(data, "t_load", xlim=(0,200_000), ylim=(0,10), savename="t_load_lin", title="Time (in s) to load an NT file in memory")
+
+    my_plot(data, "r_load", title="Load rate (in triple/s) from an NT file in memory", logx=1)
 
     my_plot(data, 'm_graph', title="Memory (in kB) used while allocating for the graph", loglog=1, exclude=['jena'])
 
