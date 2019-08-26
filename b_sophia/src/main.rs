@@ -13,8 +13,8 @@ use sophia::error::*;
 use sophia::graph::*;
 use sophia::graph::inmem::*;
 use sophia::ns::rdf;
-use sophia::parsers::nt;
-use sophia::streams::*;
+use sophia::parser::nt;
+use sophia::triple::stream::*;
 use sophia::term::Term;
 
 fn get_vmsize() -> usize {
@@ -54,14 +54,14 @@ fn task_query_g<G, R> (f: R, mut g: G) where
     let m1 = get_vmsize();
     let time_parse = (t1-t0) as f64/1e9;
     let mem_graph = m1-m0;
-    eprintln!("loaded  : ~ {:?} triples\n", g.iter().size_hint());
+    eprintln!("loaded  : ~ {:?} triples\n", g.triples().size_hint());
 
     let mut time_first: f64 = 0.0;
     let time_rest;
     let dbo_person = Term::<&'static str>::new_iri("http://dbpedia.org/ontology/Person").unwrap();
 
     let mut t0 = precise_time_ns();
-    let results = g.iter_for_po(&rdf::type_, &dbo_person);
+    let results = g.triples_with_po(&rdf::type_, &dbo_person);
     let mut c = 0;
     for _ in results {
         if c == 0 {
