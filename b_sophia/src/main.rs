@@ -80,17 +80,27 @@ fn task_query_g<G, R> (f: R, mut g: G) where
 
 fn task_parse<T: io::BufRead> (f: T, variant: Option<&str>) {
     eprintln!("task    : parse");
-    if variant.is_some() {
-        eprintln!("no variant expected for the 'parse' task");
-        process::exit(1);
-    }
+    match variant {
+        None => {
+            task_parse_nt(f);
+        }
+        Some("nt") => {
+            task_parse_nt(f);
+        }
+        Some(v) => {
+            eprintln!("Unknown variant {}", v);
+            process::exit(1);
+        }
+    };
+}
+
+fn task_parse_nt<T: io::BufRead> (f: T) {
     let t0 = precise_time_ns();
     nt::parse_read(f).in_sink(&mut ()).expect("Error parsing NT file");
     let t1 = precise_time_ns();
     let time_parse = (t1-t0) as f64/1e9;
     println!("{}", time_parse);
 }
-
 
 
 fn main() {
