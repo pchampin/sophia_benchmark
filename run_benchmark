@@ -13,7 +13,7 @@ TOOLS = {
     "librdf":         "./b_librdf/run     {task} '{filename}'",
     "librdf-ttl":     "./b_librdf/run     {task} '{filename}' turtle",
     "jena":           "./b_jena/run       {task} '{filename}'",
-    "n3js":           "./b_wasm/n3js.js   {task} '{filename}'",
+    "n3js":           "./b_nodejs/n3js.js {task} '{filename}'",
     "python":         "./b_python/run     {task} '{filename}'",
     "pypy":           "./b_python/run     {task} '{filename}' pypy",
 }
@@ -30,7 +30,6 @@ FILES = [
 
 LIMITS = {
     ("librdf", "query"):   100_000,
-    ("jena",   "query"): 1_000_000, # OutOfMemoryError: Java heap space
     ("n3js",   "query"): 1_000_000,
     ("python", "query"): 1_000_000,
 }

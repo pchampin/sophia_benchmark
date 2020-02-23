@@ -50,15 +50,16 @@ def my_plot(data, attr_name, *, exclude=[], savename=None, **kw):
     return ax
 
 def plot_query_stats(data):
-    my_plot(data, "t_load", title="Time (in s) to load an NT file in memory", loglog=1)
+    my_plot(data, "t_load", title="Time (in s) to load an NT file in memory", loglog=True)
     #my_plot(data, "t_load", xlim=(0,200_000), ylim=(0,10), savename="t_load_lin", title="Time (in s) to load an NT file in memory")
 
-    my_plot(data, "r_load", title="Load rate (in triple/s) from an NT file in memory", logx=1)
+    my_plot(data, "r_load", title="Load rate (in triple/s) from an NT file in memory", logx=True)
 
-    my_plot(data, 'm_graph', title="Memory (in kB) used while allocating for the graph", loglog=1, exclude=['jena'])
+    my_plot(data, 'm_graph', title="Memory (in kB) used while allocating for the graph", loglog=True, exclude=['jena'])
 
-    my_plot(data, 't_first', title="Time (in s) to retrieve the first matching triple (*,p,o)", loglog=1)
+    my_plot(data, 't_first', title="Time (in s) to retrieve the first matching triple (*,p,o)", loglog=True)
     
-    my_plot(data, 't_query', title="Time (in s) to retrieve all matching triples (*,p,o)", loglog=1)
+    my_plot(data, 't_query', title="Time (in s) to retrieve all matching triples (*,p,o)", loglog=True)
     #my_plot(data, 't_query', xlim=(0,1_000_000), ylim=(0, 0.1), title="Time (in s) to retrieve all matching triples (*,p,o)", savename="t_query_lin")
+
   
