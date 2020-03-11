@@ -10,11 +10,16 @@ color_key = {
     "sophia_lg": "darkorange",
     "librdf": "purple",
     "jena": "black",
-    "n3js": "green",
+    "n3js": "blue",
     "sophia_wasm": "darkorange",
     "sophia_wasm_lg": "red",
-    "python": "blue",
-    "pypy": "darkblue",
+    "python": "green",
+    "pypy": "darkgreen",
+    
+    "sophia-v0.1.0": "#888888",
+    "sophia-v0.2.0": "#996666",
+    "sophia-v0.3.0": "#BB3333",
+    "sophia-v0.4.0": "#EE0000",
 }
 
 def load_data(task, *tools):
@@ -32,6 +37,8 @@ def load_data(task, *tools):
     if task == 'query':
         df['t_query'] = (df.t_first + df.t_rest)
         df['r_load'] = (df['size'] / df.t_load)
+    elif task == 'parse':
+        df['r_parse'] = (df['size'] / df.t_parse)
     return df.groupby(['tool', 'size'])
 
 def my_plot(data, attr_name, *, exclude=[], savename=None, **kw):

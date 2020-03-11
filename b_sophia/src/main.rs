@@ -9,7 +9,6 @@ extern crate time;
 use time::precise_time_ns;
 
 extern crate sophia;
-use sophia::error::*;
 use sophia::graph::*;
 use sophia::graph::inmem::*;
 use sophia::ns::rdf;
@@ -45,11 +44,10 @@ fn task_query<R> (f: R, variant: Option<&str>) where
 fn task_query_g<G, R> (f: R, mut g: G) where
     R: io::BufRead,
     G: MutableGraph,
-    Error: CoercibleWith<G::MutationError>,
 {
     let m0 = get_vmsize();
     let t0 = precise_time_ns();
-    nt::parse_read(f).in_graph(&mut g).expect("Error parsing NT file");
+    nt:: parse_bufread(f).in_graph(&mut g).expect("Error parsing NT file");
     let t1 = precise_time_ns();
     let m1 = get_vmsize();
     let time_parse = (t1-t0) as f64/1e9;
@@ -96,7 +94,7 @@ fn task_parse<T: io::BufRead> (f: T, variant: Option<&str>) {
 
 fn task_parse_nt<T: io::BufRead> (f: T) {
     let t0 = precise_time_ns();
-    nt::parse_read(f).in_sink(&mut ()).expect("Error parsing NT file");
+    nt::parse_bufread(f).for_each_triple(|_| ()).expect("Error parsing NT file");
     let t1 = precise_time_ns();
     let time_parse = (t1-t0) as f64/1e9;
     println!("{}", time_parse);
