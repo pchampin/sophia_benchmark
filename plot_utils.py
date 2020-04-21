@@ -5,12 +5,19 @@ import sys
 import warnings
 warnings.filterwarnings('ignore', message='.*converting a masked element to nan.*')
 
+alias = {
+    "sophia": "sophia (rust)",
+    "librdf": "librdf (c)",
+    "jena": "jena (java)",
+    "n3js": "n3js (js)",
+    "python": "rdflib (python)",
+}
 color_key = {
-    "sophia": "red",
+    "sophia (rust)": "red",
     "sophia_lg": "darkorange",
-    "librdf": "purple",
-    "jena": "black",
-    "n3js": "blue",
+    "librdf (c)": "purple",
+    "jena (java)": "black",
+    "n3js (js)": "blue",
     "sophia_wasm": "darkorange",
     "sophia_wasm_lg": "red",
     "python": "green",
@@ -27,7 +34,7 @@ def load_data(task, *tools):
     for tool in tools:
         try:
             df = pd.read_csv("csv/{}-{}.csv".format(task, tool))
-            df['tool'] = tool
+            df['tool'] = alias.get(tool, tool)
             dfs.append(df)
         except FileNotFoundError as ex:
             print(ex, file=sys.stderr)
