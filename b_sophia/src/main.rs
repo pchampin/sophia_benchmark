@@ -6,7 +6,7 @@ extern crate regex;
 use regex::Regex;
 
 extern crate time;
-use time::precise_time_ns;
+use time::OffsetDateTime;
 
 extern crate sophia;
 use sophia::graph::*;
@@ -46,11 +46,11 @@ fn task_query_g<G, R> (f: R, mut g: G) where
     G: MutableGraph,
 {
     let m0 = get_vmsize();
-    let t0 = precise_time_ns();
-    nt:: parse_bufread(f).in_graph(&mut g).expect("Error parsing NT file");
-    let t1 = precise_time_ns();
+    let t0 = OffsetDateTime::now();
+    g.insert_all(nt::parse_bufread(f)).expect("Error parsing NT file");
+    let t1 = OffsetDateTime::now();
     let m1 = get_vmsize();
-    let time_parse = (t1-t0) as f64/1e9;
+    let time_parse = (t1-t0).as_seconds_f64();
     let mem_graph = m1-m0;
     eprintln!("loaded  : ~ {:?} triples\n", g.triples().size_hint());
 
@@ -58,19 +58,19 @@ fn task_query_g<G, R> (f: R, mut g: G) where
     let time_rest;
     let dbo_person = Term::<&'static str>::new_iri("http://dbpedia.org/ontology/Person").unwrap();
 
-    let mut t0 = precise_time_ns();
+    let mut t0 = OffsetDateTime::now();
     let results = g.triples_with_po(&rdf::type_, &dbo_person);
     let mut c = 0;
     for _ in results {
         if c == 0 {
-            let t1 = precise_time_ns();
-            time_first = (t1-t0) as f64/1e9;
-            t0 = precise_time_ns();
+            let t1 = OffsetDateTime::now();
+            time_first = (t1-t0).as_seconds_f64();
+            t0 = OffsetDateTime::now();
         }
         c += 1;
     }
-    let t1 = precise_time_ns();
-    time_rest = (t1-t0) as f64/1e9;
+    let t1 = OffsetDateTime::now();
+    time_rest = (t1-t0).as_seconds_f64();
     eprintln!("matching triple: {}\n", c);
 
     println!("{},{},{},{}", time_parse, mem_graph, time_first, time_rest);
@@ -93,10 +93,10 @@ fn task_parse<T: io::BufRead> (f: T, variant: Option<&str>) {
 }
 
 fn task_parse_nt<T: io::BufRead> (f: T) {
-    let t0 = precise_time_ns();
+    let t0 = OffsetDateTime::now();
     nt::parse_bufread(f).for_each_triple(|_| ()).expect("Error parsing NT file");
-    let t1 = precise_time_ns();
-    let time_parse = (t1-t0) as f64/1e9;
+    let t1 = OffsetDateTime::now();
+    let time_parse = (t1-t0).as_seconds_f64();
     println!("{}", time_parse);
 }
 
