@@ -37,6 +37,7 @@ LIMITS = {
 HEADERS = {
     "parse": "t_parse",
     "query": "t_load,m_graph,t_first,t_rest",
+    "query2": "t_load,m_graph,t_first,t_rest",
 }
 
 def main():

@@ -37,14 +37,14 @@ def load_data(task, *tools):
     df = pd.concat(dfs)
     df.index = range(len(df.index))
     
-    if task == 'query':
+    if task[:5] == 'query':
         df['t_query'] = (df.t_first + df.t_rest)
         df['r_load'] = (df['size'] / df.t_load)
     elif task == 'parse':
         df['r_parse'] = (df['size'] / df.t_parse)
     return df.groupby(['tool', 'size'])
 
-def my_plot(data, attr_name, *, exclude=[], savename=None, color_key=color_key, **kw):
+def my_plot(data, attr_name, *, exclude=[], savename=None, color_key=color_key, fig=None, **kw):
     means = data[attr_name].mean().unstack().transpose()
     stdev = data[attr_name].std().unstack().transpose()
     for i in exclude:

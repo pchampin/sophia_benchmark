@@ -33,8 +33,9 @@
 
 #define RDF_TYPE "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 #define DBO_PERSON "http://dbpedia.org/ontology/Person"
+#define DBR_VINCENT "http://dbpedia.org/resource/Vincent_Descombes_Sevoie"
 
-int main_query(int argc, char *argv[]) 
+int do_query(int query_num, int argc, char *argv[])
 {
   librdf_world* world;
   librdf_storage* storage;
@@ -42,7 +43,7 @@ int main_query(int argc, char *argv[])
   librdf_model* model;
   librdf_uri* base = NULL;
   librdf_stream* stream;
-  librdf_node *predicate, *object;
+  librdf_node *subject, *predicate, *object;
   librdf_statement *partial_statement;
   char *program=argv[0];
   char *task=argv[1];
@@ -116,15 +117,20 @@ int main_query(int argc, char *argv[])
   /* Construct the query predicate (arc) and object (target) 
    * and partial statement bits
    */
-  predicate=librdf_new_node_from_uri_string(world, (const unsigned char*)RDF_TYPE);
-  object=librdf_new_node_from_uri_string(world, (const unsigned char*)DBO_PERSON);
-  if(!predicate || !object) {
-    fprintf(stderr, "%s: Failed to create nodes for searching\n", program);
-    return(1);
-  }
   partial_statement=librdf_new_statement(world);
-  librdf_statement_set_predicate(partial_statement, predicate);
-  librdf_statement_set_object(partial_statement, object);
+  if (query_num == 1) {
+    predicate=librdf_new_node_from_uri_string(world, (const unsigned char*)RDF_TYPE);
+    object=librdf_new_node_from_uri_string(world, (const unsigned char*)DBO_PERSON);
+    if(!predicate || !object) {
+      fprintf(stderr, "%s: Failed to create nodes for searching\n", program);
+      return(1);
+    }
+    librdf_statement_set_predicate(partial_statement, predicate);
+    librdf_statement_set_object(partial_statement, object);
+  } else {
+    subject=librdf_new_node_from_uri_string(world, (const unsigned char*)DBR_VINCENT);
+    librdf_statement_set_subject(partial_statement, subject);
+  }
 
   /* QUERY TEST 1 - use find_statements to match */
   t0 = get_nanosec();
@@ -168,6 +174,14 @@ int main_query(int argc, char *argv[])
   librdf_memory_report(stderr);
 #endif
   return(0);
+}
+
+int main_query(int argc, char *argv[]) {
+  return do_query(1, argc, argv);
+}
+
+int main_query2(int argc, char *argv[]) {
+  return do_query(2, argc, argv);
 }
 
 //// further code from the example file

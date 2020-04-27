@@ -12,7 +12,9 @@ public class JenaBenchmark {
         if (args[0].equals("parse")) {
             benchmark_parse(args);
         } else if (args[0].equals("query")) {
-            benchmark_query(args);
+            benchmark_query(1, args);
+        } else if (args[0].equals("query2")) {
+            benchmark_query(2, args);
         } else if (args[0].equals("test")) {
             benchmark_test(args);
         } else {
@@ -25,7 +27,7 @@ public class JenaBenchmark {
         throw new RuntimeException("Not implemented");
     }
 
-    public static void benchmark_query(String[] args) {
+    public static void benchmark_query(int queryNum, String[] args) {
         // writes 3 numbers:
         // - time (in s) to load the NT file into an in-memory graph
         // - memory (in kB) allocated for creating and loading graph
@@ -51,7 +53,15 @@ public class JenaBenchmark {
 
         t0 = System.nanoTime();
         Resource personClass = model.createResource("http://dbpedia.org/ontology/Person");
-        StmtIterator results = model.listStatements(null, RDF.type, personClass);
+        Resource vincent = model.createResource("http://dbpedia.org/resource/Vincent_Descombes_Sevoie");
+        SimpleSelector selector;
+        if (queryNum == 1) {
+            selector = new SimpleSelector(null, RDF.type, personClass);
+        } else {// if (queryNum == 2) {
+            Resource no_obj = null;
+            selector = new SimpleSelector(vincent, null, no_obj);
+        }
+        StmtIterator results = model.listStatements(selector);
         long nb_stmts = 0;
         while (results.hasNext()) {
             Statement s = results.next();

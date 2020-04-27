@@ -29,10 +29,10 @@ fn task_query<R> (f: R, variant: Option<&str>) where
     eprintln!("task    : query");
     match variant {
         None => { 
-            task_query_g(f, FastGraph::new());
+            task_query_g(f, FastGraph::new(), 1);
         }
         Some("light") => {
-            task_query_g(f, LightGraph::new());
+            task_query_g(f, LightGraph::new(), 1);
         }
         Some(v) => {
             eprintln!("Unknown variant {}", v);
@@ -41,7 +41,26 @@ fn task_query<R> (f: R, variant: Option<&str>) where
     };
 }
 
-fn task_query_g<G, R> (f: R, mut g: G) where
+fn task_query2<R> (f: R, variant: Option<&str>) where
+    R: io::BufRead,
+{
+    eprintln!("task    : query2");
+    match variant {
+        None => {
+            task_query_g(f, FastGraph::new(), 2);
+        }
+        Some("light") => {
+            task_query_g(f, LightGraph::new(), 2);
+        }
+        Some(v) => {
+            eprintln!("Unknown variant {}", v);
+            process::exit(1);
+        }
+    };
+}
+
+
+fn task_query_g<G, R> (f: R, mut g: G, query_num: usize) where
     R: io::BufRead,
     G: MutableGraph,
 {
@@ -57,9 +76,14 @@ fn task_query_g<G, R> (f: R, mut g: G) where
     let mut time_first: f64 = 0.0;
     let time_rest;
     let dbo_person = Term::<&'static str>::new_iri("http://dbpedia.org/ontology/Person").unwrap();
+    let dbr_vincent = Term::<&'static str>::new_iri("http://dbpedia.org/resource/Vincent_Descombes_Sevoie").unwrap();
 
     let mut t0 = OffsetDateTime::now();
-    let results = g.triples_with_po(&rdf::type_, &dbo_person);
+    let results = match query_num {
+        1 => g.triples_with_po(&rdf::type_, &dbo_person),
+        _ => g.triples_with_s(&dbr_vincent),
+    };
+
     let mut c = 0;
     for _ in results {
         if c == 0 {
@@ -122,6 +146,7 @@ fn main() {
     match task_id {
         "parse"  => task_parse(f, variant),
         "query" => task_query(f, variant),
+        "query2" => task_query2(f, variant),
         _   => {
             eprint!("Unknown task {}", task_id);
             process::exit(1);

@@ -20,7 +20,7 @@ def get_time():
 def task_parse():
     raise NotImplementedError()
 
-def task_query():
+def task_query(query_num=1):
     filename = argv[2]
     syntax = argv[3] if len(argv) > 3 else "nt"
     m0 = get_vmsize()
@@ -32,7 +32,11 @@ def task_query():
     time_load = t1-t0
     mem_graph = m1-m0
 
-    pattern = (None, RDF.type, URIRef("http://dbpedia.org/ontology/Person"))
+    patterns = {
+        1: (None, RDF.type, URIRef("http://dbpedia.org/ontology/Person")),
+        2: (URIRef("http://dbpedia.org/resource/Vincent_Descombes_Sevoie"), None, None),
+    }
+    pattern = patterns[query_num];
     time_first = None
     c = 1
     t0 = get_time()
@@ -55,6 +59,8 @@ def main():
         task_parse()
     elif argv[1] == 'query':
         task_query()
+    elif argv[1] == 'query2':
+        task_query(2)
     
 
 

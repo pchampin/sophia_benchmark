@@ -3,6 +3,7 @@
 
 int main_parse(int argc, char *argv[]);
 int main_query(int argc, char *argv[]);
+int main_query2(int argc, char *argv[]);
 
 int main(int argc, char *argv[]) {
     if (argc <3) {
@@ -13,6 +14,8 @@ int main(int argc, char *argv[]) {
     if (strcmp(task, "parse") == 0) {
         return main_parse(argc, argv);
     } else if (strcmp(task, "query") == 0) {
+        return main_query(argc, argv);
+    } else if (strcmp(task, "query2") == 0) {
         return main_query(argc, argv);
     } else {
         fprintf(stderr, "Unkonwn task %s\n", task);

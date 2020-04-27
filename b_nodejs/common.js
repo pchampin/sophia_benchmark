@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { performance } = require("perf_hooks");
 
-TASKS = ['parse', 'query'];
+TASKS = ['parse', 'query', 'query2'];
 
 const filename = process.argv[3];
 if (filename === undefined) {

@@ -5,7 +5,8 @@ const { task, filename, stream, get_vmsize, performance } = require("./common.js
 
 const do_task = {
     'parse': parse_nt,
-    'query': query_nt,
+    'query': () => query_nt(1),
+    'query2': () => query_nt(2),
 }[task];
 
 do_task();
@@ -33,7 +34,7 @@ function parse_nt() {
     });    
 }
 
-function query_nt() {
+function query_nt(query_num) {
     let t_load, m_graph, t_first, t_rest;
     let start, duration;
     const format = process.argv[4] || "N-Triples";    
@@ -54,8 +55,16 @@ function query_nt() {
             t_load = duration/1000;
             m_graph = mem1-mem0
 
-            const predicate = n3.DataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
-            const object = n3.DataFactory.namedNode('http://dbpedia.org/ontology/Person');
+            let subject, predicate, object;
+            if (query_num == 1) {
+                subject = null;
+                predicate = n3.DataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+                object = n3.DataFactory.namedNode('http://dbpedia.org/ontology/Person');
+            } else if (query_num == 2) {
+                subject = n3.DataFactory.namedNode('http://dbpedia.org/resource/Vincent_Descombes_Sevoie');;
+                predicate = null;
+                object = null;
+            }
             start = performance.now();
             let counter = 0;
             store.forEach((quad) => {
@@ -65,14 +74,14 @@ function query_nt() {
                     start = performance.now();
                 }
                 counter += 1;
-            }, null, predicate, object);
+            }, subject, predicate, object);
 
             duration = performance.now() - start;
             t_rest = duration/1000;
             console.error(`retrieved: ${counter}`);
             console.log(`${t_load},${m_graph},${t_first},${t_rest}`);
             process.exit(0);
-    };        
-    });    
+        }
+    });
 }
 
