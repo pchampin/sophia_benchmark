@@ -24,8 +24,8 @@ FILES = [
     ("./data/persondata_en_40k.ttl",    40_000),
     ("./data/persondata_en_80k.ttl",    80_000),
     ("./data/persondata_en_100k.ttl",  100_000),
-    ("./data/persondata_en_1M.ttl",  1_000_000),
-    ("./data/persondata_en.ttl",    10_310_000),
+    #("./data/persondata_en_1M.ttl",  1_000_000),
+    #("./data/persondata_en.ttl",    10_310_000),
 ]
 
 LIMITS = {
@@ -86,13 +86,14 @@ def main():
         except KeyboardInterrupt:
             sys.stdout.write("\r") # clear the '^C' that appears
 
-    csv_link = "csv/{}-{}.csv".format(task, tool)
-    try:
-        os.unlink(csv_link)
-    except FileNotFoundError:
-        pass
-    os.link(csv, csv_link)
-    print("LINKED", csv_link)
+    if not os.environ.get("NO_LINK"):
+        csv_link = "csv/{}-{}.csv".format(task, tool)
+        try:
+            os.unlink(csv_link)
+        except FileNotFoundError:
+            pass
+        os.link(csv, csv_link)
+        print("LINKED", csv_link)
     
 
 main()
