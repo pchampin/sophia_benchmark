@@ -15,7 +15,8 @@ Otherwise, you need [Jupyter](http://jupyter.org/) to visualize them.
 
 The tests have been designed for my machine, running Ubuntu 18.10.
 To load and build all the necessarily files,
-type `make` in the root directory of the project.
+type `make` in the root directory of the project
+(see [`benchmark_results.ipynb`](./benchmark_results.ipynb) for dependencies).
 To re-generate the CSV files,
 use the `run_benchmark` command with the appropriate arguments.
 
