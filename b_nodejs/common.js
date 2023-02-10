@@ -19,7 +19,7 @@ const stream = fs.createReadStream(filename);
 
 function get_vmsize() {
     txt = fs.readFileSync("/proc/self/status", encoding="utf8");
-    val = txt.match(/VmSize:\W*([0-9]+) kB/).pop();
+    val = txt.match(/VmRSS:\W*([0-9]+) kB/).pop();
     return Number.parseInt(val);
 }
 
