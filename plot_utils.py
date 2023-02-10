@@ -77,7 +77,7 @@ def plot_query_stats(data, color_key=color_key, group=False):
         _, ax0 = plt.subplots(figsize=(figw, figh), nrows=1, ncols=1)
     else:
         ax0 = None
-    my_plot(data, 'm_graph', title="Memory (in kB) used while allocating for the graph", loglog=True, exclude=['jena (java)'], color_key=color_key, ax=ax0)
+    my_plot(data, 'm_graph', title="Memory (in kB, RSS) used while allocating for the graph", loglog=True, color_key=color_key, ax=ax0)
     
     if group:
         _, (ax0, ax1) = plt.subplots(figsize=(figw*2, figh), nrows=1, ncols=2)

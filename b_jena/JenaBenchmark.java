@@ -10,7 +10,6 @@ import org.apache.jena.riot.lang.PipedRDFStream;
 import org.apache.jena.riot.lang.PipedTriplesStream;
 import org.apache.jena.util.*;
 import org.apache.jena.vocabulary.*;
-import org.apache.log4j.PropertyConfigurator;
 
 import org.apache.jena.riot.*;
 import org.apache.jena.graph.*;
@@ -19,9 +18,6 @@ import org.apache.jena.riot.system.*;
 
 public class JenaBenchmark {
     public static void main(String[] args) {
-        // configure Log4J (to get rid of warn messages)
-        PropertyConfigurator.configure("apache-jena-3.10.0/jena-log4j.properties");
-
         if (args[0].equals("parse")) {
             benchmark_parse(args);
         } else if (args[0].equals("query")) {
@@ -40,7 +36,8 @@ public class JenaBenchmark {
 
         Model model = ModelFactory.createDefaultModel();
         final PipedRDFIterator<Triple> iter = new PipedRDFIterator<Triple>();
-        final PipedRDFStream<Triple> stream = new PipedTriplesStream(iter);        final long t0 = System.nanoTime();
+        final PipedRDFStream<Triple> stream = new PipedTriplesStream(iter);
+        final long t0 = System.nanoTime();
         long c = 0;
         final ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -132,10 +129,10 @@ public class JenaBenchmark {
                     new InputStreamReader(
                         new FileInputStream(filename)));
             String vmsize = br.lines()
-                .filter(line -> line.matches("VmSize.*"))
+                .filter(line -> line.matches("VmRSS.*"))
                 .findFirst()
                 .get()
-                .replaceAll("VmSize:\\h*", "")
+                .replaceAll("VmRSS:\\h*", "")
                 .replaceAll(" *kB", "");
             return Long.parseLong(vmsize);
         }
