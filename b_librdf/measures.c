@@ -35,7 +35,7 @@ int get_vmsize(){ //Note: this value is in KB!
     char line[128];
 
     while (fgets(line, 128, file) != NULL){
-        if (strncmp(line, "VmSize:", 7) == 0){
+        if (strncmp(line, "VmRSS:", 6) == 0){
             result = parse_line(line);
             break;
         }
