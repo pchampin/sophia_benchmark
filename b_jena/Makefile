@@ -1,4 +1,4 @@
-JENA=apache-jena-3.10.0
+JENA=apache-jena-4.7.0
 
 .PHONY: all
 all: build test
@@ -10,6 +10,7 @@ ${JENA}:
 	wget https://www-eu.apache.org/dist/jena/binaries/${JENA}.tar.gz
 	tar xzf ${JENA}.tar.gz
 	rm ${JENA}.tar.gz
+	sed -i 's|INFO|OFF|' "${JENA}/log4j2.properties"
 
 JenaBenchmark.class: ${JENA} JenaBenchmark.java
 	javac -cp "`./cp.sh`" JenaBenchmark.java
