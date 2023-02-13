@@ -28,7 +28,10 @@ use the `run_benchmark` command with the appropriate arguments.
 
 #### librdf
 
-pacman -S redland
+one of the following (depending on your distribution):
+
+* pacman -S redland
+* apt install librdf-dev
 
 ## Adding libraries to the benchmark
 
