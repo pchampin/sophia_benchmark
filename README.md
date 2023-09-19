@@ -20,6 +20,19 @@ type `make` in the root directory of the project
 To re-generate the CSV files,
 use the `run_benchmark` command with the appropriate arguments.
 
+### Further Requirements
+
+#### n3js
+
+    export NODE_OPTIONS=--max_old_space_size=16000
+
+#### librdf
+
+one of the following (depending on your distribution):
+
+* pacman -S redland
+* apt install librdf-dev
+
 ## Adding libraries to the benchmark
 
 If you want to add another library to the benchmark,

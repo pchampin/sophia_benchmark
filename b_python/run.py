@@ -7,7 +7,7 @@ from time import clock_getres, clock_gettime, CLOCK_MONOTONIC
 from rdflib import Graph, RDF, URIRef
 
 assert clock_getres(CLOCK_MONOTONIC) == 1e-9
-VMSIZE_RE = re.compile(r"VmSize\s*:\s*([0-9]*)")
+VMSIZE_RE = re.compile(r"VmRSS\s*:\s*([0-9]*)")
 
 def get_vmsize():
     with open("/proc/self/status") as f:
